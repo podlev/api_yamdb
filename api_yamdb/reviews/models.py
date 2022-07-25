@@ -1,5 +1,20 @@
+<<<<<<< HEAD
 from django.db import models
 
+=======
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+
+class User(AbstractUser):
+    pass
+
+
+class Titles(models.Model):
+    pass
+
+
+>>>>>>> f263828a5f6f75f0c8573330f527961c6cffb933
 class Categories(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField()
