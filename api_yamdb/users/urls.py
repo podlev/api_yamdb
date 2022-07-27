@@ -5,6 +5,7 @@ from users.views import UserViewSet, new_user, update_token
 
 router = routers.DefaultRouter()
 router.register('users', UserViewSet)
+router.register('users/<str:username>/', UserViewSet)
 
 urlpatterns = [
     path('api/v1/', include(router.urls)),
