@@ -23,6 +23,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
     'reviews.apps.ReviewsConfig',
+    'rest_framework',
+    'django_filters',
+    'rest_framework_simplejwt',
+
 ]
 
 MIDDLEWARE = [
@@ -55,7 +59,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'api_yamdb.wsgi.application'
-
 
 # Database
 
@@ -105,3 +108,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
 
 AUTH_USER_MODEL = 'reviews.User'
+
+DEFAULT_AUTO_FIELD ='django.db.models.AutoField'
