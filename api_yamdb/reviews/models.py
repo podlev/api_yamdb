@@ -58,4 +58,3 @@ class Genre_title(models.Model):
     genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
 
-
