@@ -31,7 +31,7 @@ class Genre(models.Model):
 class Titles(models.Model):
     """Модель произведений"""
     name = models.CharField(max_length=50)
-    year = models.DateTimeField('Год создания')
+    year = models.CharField('Год создания', max_length=4)
     description = models.TextField(blank=True)
     category = models.ForeignKey(
         Categories,
@@ -50,7 +50,7 @@ class Titles(models.Model):
 
 class Genre_title(models.Model):
     """Вспомогательная модель жанров произведений"""
-    title_id = models.ForeignKey(Titles, on_delete=models.CASCADE)
-    genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    title_id = models.ForeignKey(Titles, on_delete=models.CASCADE, null=True)
+    genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True)
 
 
