@@ -15,11 +15,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 class TokenSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
-    confirmation_code = serializers.CharField(max_length=6)
+    confirmation_code = serializers.CharField(max_length=50)
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         lookup_field = 'username'

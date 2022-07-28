@@ -4,6 +4,7 @@ from rest_framework import filters
 
 from django_filters.rest_framework import DjangoFilterBackend
 from reviews.models import Categories, Genre, Titles
+from users.permissions import IsAdminOrReadOnly
 from .serializers import (CategoriesSerializer,
                           GenreSerializer,
                           TitlesSerializer,
@@ -17,6 +18,8 @@ class CategoriesViewSet(ListCreateDestroyViewSet):
     serializer_class = CategoriesSerializer
     filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     search_fields = ('name',)
+    lookup_field = 'slug'
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class GenreViewSet(ListCreateDestroyViewSet):
@@ -24,6 +27,8 @@ class GenreViewSet(ListCreateDestroyViewSet):
     serializer_class = GenreSerializer
     filter_backends = (DjangoFilterBackend,)
     search_fields = ('name',)
+    lookup_field = 'slug'
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
@@ -32,6 +37,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('name', 'year', 'genre__name', 'category__name')
     search_fields = ('name', 'year', 'genre__name', 'category__name')
+    permission_classes = (IsAdminOrReadOnly,)
 
     def get_serializer_class(self):
         if self.action in ('retrieve', 'list'):

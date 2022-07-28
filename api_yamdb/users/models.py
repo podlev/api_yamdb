@@ -14,4 +14,3 @@ class User(AbstractUser):
     email = models.EmailField(max_length=254, unique=True)
     bio = models.TextField(blank=True, default='')
     role = models.CharField(choices=ROLE_CHOICES, default='user', max_length=10)
-    confirmation_code = models.TextField(default='000000')
