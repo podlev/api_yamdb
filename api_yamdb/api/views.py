@@ -1,15 +1,15 @@
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework import filters
 
-from django_filters.rest_framework import DjangoFilterBackend
 from reviews.models import Categories, Genre, Titles
 from users.permissions import IsAdminOrReadOnly
+from .mixins import ListCreateDestroyViewSet
 from .serializers import (CategoriesSerializer,
                           GenreSerializer,
                           TitlesSerializer,
                           TitlesPostSerializer)
-from .mixins import ListCreateDestroyViewSet
 
 
 class CategoriesViewSet(ListCreateDestroyViewSet):

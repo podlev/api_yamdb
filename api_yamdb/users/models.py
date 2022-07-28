@@ -14,3 +14,11 @@ class User(AbstractUser):
     email = models.EmailField(max_length=254, unique=True)
     bio = models.TextField(blank=True, default='')
     role = models.CharField(choices=ROLE_CHOICES, default='user', max_length=10)
+
+    def save(self, *args, **kwargs):
+        if self.is_superuser:
+            self.role = 'admin'
+        super(User, self).save()
+
+    def __str__(self):
+        return f'User: {self.username}'
