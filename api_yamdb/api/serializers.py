@@ -7,17 +7,19 @@ import datetime as dt
 class TitlesPostSerializer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
         many=True,
-        slug_field='name',
+        slug_field='slug',
         queryset=Genre.objects.all()
     )
     category = serializers.SlugRelatedField(
-        slug_field='name',
+        slug_field='slug',
         queryset=Categories.objects.all()
     )
 
     class Meta:
         model = Titles
-        fields = ('name', 'slug')
+        fields = (
+           'id', 'name', 'year', 'description', 'genre', 'category',
+        )
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -38,7 +40,9 @@ class TitlesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Titles
-        fields = '__all__'
+        fields = (
+            'id', 'name', 'year', 'description', 'genre', 'category'
+        )
 
         def validate_year(self, value):
             year = dt.date.today().year
