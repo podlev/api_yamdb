@@ -50,7 +50,7 @@ class TitlesSerializer(serializers.ModelSerializer):
         model = Titles
 
         fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category',
+            'id', 'name', 'year', 'description', 'genre', 'category', 'rating'
         )
 
         def validate_year(self, value):
