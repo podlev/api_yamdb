@@ -10,7 +10,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .permissions import IsAdmin
-from .serializers import UserSerializer, RegistrationSerializer, TokenSerializer
+from .serializers import (UserSerializer,
+                          RegistrationSerializer,
+                          TokenSerializer)
 from .utils import get_confirmation_code, check_confirmation_code
 
 User = get_user_model()
@@ -24,7 +26,8 @@ class UserViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
 
-    @action(methods=['GET', 'PATCH'], detail=False, permission_classes=(IsAuthenticated,))
+    @action(methods=['GET', 'PATCH'], detail=False,
+            permission_classes=(IsAuthenticated,))
     def me(self, request):
         if request.method == 'PATCH':
             user = request.user
@@ -41,6 +44,7 @@ class UserViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def new_user(request):
+    """Функция создания нового пользователя"""
     serializer = RegistrationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
@@ -50,17 +54,19 @@ def new_user(request):
         user = get_object_or_404(User, username=username)
         send_mail(subject='New registration',
                   recipient_list=[serializer.validated_data.get('email')],
-                  message=f'Your confirmation code: {get_confirmation_code(user)}',
+                  message=f'Your code: {get_confirmation_code(user)}',
                   from_email='email@email.ru',
                   fail_silently=False)
     except SMTPException as e:
-        return Response({'error': e}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'error': e},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def update_token(request):
+    """Функция получения токена"""
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     username = serializer.data.get('username')
@@ -68,6 +74,8 @@ def update_token(request):
     user = get_object_or_404(User, username=username)
     if check_confirmation_code(user, confirmation_code):
         refresh = RefreshToken.for_user(user)
-        return Response({'token': str(refresh.access_token)}, status=status.HTTP_200_OK)
+        return Response({'token': str(refresh.access_token)},
+                        status=status.HTTP_200_OK)
     else:
-        return Response({'token': 'invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'token': 'invalid token'},
+                        status=status.HTTP_400_BAD_REQUEST)
