@@ -18,7 +18,7 @@ class TitlesPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Titles
-        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category',)
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -51,6 +51,7 @@ class TitlesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Titles
         fields = ('id', 'name', 'year', 'description', 'genre', 'category')
+
 
         def validate_year(self, value):
             year = dt.date.today().year
