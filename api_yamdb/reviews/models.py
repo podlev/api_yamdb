@@ -1,4 +1,3 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
@@ -52,5 +51,3 @@ class Genre_title(models.Model):
     """Вспомогательная модель жанров произведений"""
     title_id = models.ForeignKey(Titles, on_delete=models.CASCADE, null=True)
     genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True)
-
-

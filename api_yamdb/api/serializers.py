@@ -1,11 +1,11 @@
 from reviews.models import Titles, Genre, Categories
 from rest_framework import serializers
-from django.db.models import Avg
+# from django.db.models import Avg
 import datetime as dt
 
 
 class TitlesPostSerializer(serializers.ModelSerializer):
-    "Cериализатор для модели Titles для записи данных"
+    """Сериализатор для модели Titles для записи данных"""
     genre = serializers.SlugRelatedField(
         many=True,
         slug_field='slug',
@@ -18,13 +18,12 @@ class TitlesPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Titles
-        fields = (
-           'id', 'name', 'year', 'description', 'genre', 'category',
-        )
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    "Cериализатор для модели Genre"
+    """Сериализатор для модели Genre"""
+
     class Meta:
         model = Genre
         fields = ('name', 'slug')
@@ -32,7 +31,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
-    "Cериализатор для модели Categories"
+    """Сериализатор для модели Categories"""
 
     class Meta:
         model = Categories
@@ -41,19 +40,17 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
 
 class TitlesSerializer(serializers.ModelSerializer):
-    "Сериализотор для модели Titles для чтения данных"
+    """Сериализатор для модели Titles для чтения данных"""
     genre = GenreSerializer(many=True, read_only=True)
     category = CategoriesSerializer(read_only=True)
+
     # rating = serializers.IntegerField(
     #     Titles.objects.annotate(rating=Avg('reviews__score'))
     # )
 
     class Meta:
         model = Titles
-
-        fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category', 'rating'
-        )
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
 
         def validate_year(self, value):
             year = dt.date.today().year
