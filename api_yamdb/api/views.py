@@ -4,11 +4,13 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 
-from reviews.models import Categories, Genre, Titles, Review
+from reviews.models import Categories, Genre, Title, Review
 from .serializers import (CategoriesSerializer,
                           GenreSerializer,
                           TitlesSerializer,
-                          TitlesPostSerializer, CommentsSerializer, ReviewSerializer)
+                          TitlesPostSerializer,
+                          CommentsSerializer,
+                          ReviewSerializer)
 from .mixins import ListCreateDestroyViewSet
 from users.permissions import IsModerator, IsAdminOrReadOnly
 from .filters import TitlesFilter
@@ -35,7 +37,7 @@ class GenreViewSet(ListCreateDestroyViewSet):
 
 class TitlesViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
-    queryset = Titles.objects.all()
+    queryset = Title.objects.all()
     serializer_class = TitlesSerializer
     permission_classes = [IsAdminOrReadOnly, ]
     filter_backends = (DjangoFilterBackend,)
@@ -52,12 +54,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [IsModerator, ]
 
     def get_queryset(self):
-        title = get_object_or_404(Titles, pk=self.kwargs.get('title_id'))
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         return title.reviews.all()
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
-        title = get_object_or_404(Titles, id=title_id)
+        title = get_object_or_404(Title, id=title_id)
         serializer.save(author=self.request.user, title=title)
 
 
@@ -66,7 +68,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsModerator, ]
 
     def get_queryset(self):
-        review = get_object_or_404(Titles, pk=self.kwargs.get('review_id'))
+        review = get_object_or_404(Title, pk=self.kwargs.get('review_id'))
         return review.comments.all()
 
     def perform_create(self, serializer):

@@ -31,7 +31,7 @@ class Genre(models.Model):
         verbose_name_plural = "Жанры"
 
 
-class Titles(models.Model):
+class Title(models.Model):
     """Модель произведений"""
     name = models.CharField(max_length=50)
     year = models.PositiveSmallIntegerField('Год создания')
@@ -53,17 +53,17 @@ class Titles(models.Model):
 
 class Genre_title(models.Model):
     """Вспомогательная модель жанров произведений"""
-    title_id = models.ForeignKey(Titles, on_delete=models.CASCADE, null=True)
+    title_id = models.ForeignKey(Title, on_delete=models.CASCADE, null=True)
     genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True)
 
 
 class Review(models.Model):
     """Модель рейтинга произведений"""
     title = models.ForeignKey(
-        Titles,
+        Title,
         verbose_name='Произведение',
         on_delete=models.CASCADE,
-        related_name='review'
+        related_name='reviews'
     )
     text = models.TextField(
         verbose_name='Текст',
@@ -72,7 +72,7 @@ class Review(models.Model):
         User,
         verbose_name='Автор',
         on_delete=models.CASCADE,
-        related_name='review'
+        related_name='reviews'
     )
     score = models.PositiveSmallIntegerField(
         verbose_name='Рейтинг',

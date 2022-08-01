@@ -1,7 +1,8 @@
+from django.db import models
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 
-from reviews.models import Titles, Genre, Categories, Review, Comments
+from reviews.models import Title, Genre, Categories, Review, Comments
 from rest_framework import serializers
 import datetime as dt
 
@@ -19,7 +20,7 @@ class TitlesPostSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ('id', 'name', 'year', 'description', 'genre', 'category',)
 
 
@@ -45,15 +46,20 @@ class TitlesSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Titles для чтения данных"""
     genre = GenreSerializer(many=True, read_only=True)
     category = CategoriesSerializer(read_only=True)
-
-    # rating = serializers.IntegerField(
-    #     Titles.objects.annotate(rating=Avg('reviews__score'))
-    # )
+    # rating = serializers.IntegerField(source='reviews__score__avg',
+    #                                   read_only=True)
+    rating = serializers.IntegerField(Title.objects.annotate(
+        rating=models.Avg('reviews__rating')))
 
     class Meta:
-        model = Titles
-        fields = ('id', 'name', 'year', 'description', 'genre', 'category')
-
+        model = Title
+        fields = ('id',
+                  'name',
+                  'year',
+                  'description',
+                  'genre',
+                  'category',
+                  'rating')
 
         def validate_year(self, value):
             year = dt.date.today().year
@@ -82,10 +88,12 @@ class ReviewSerializer(serializers.ModelSerializer):
             author = request.user
 
         title_id = self.context.get('view').kwargs.get('title_id')
-        title = get_object_or_404(Titles, pk=title_id)
+        title = get_object_or_404(Title, pk=title_id)
         if (request.method == 'POST'
-                and Review.objects.filter(title=title, author=author).exists()):
-            raise serializers.ValidationError('Можно оставить только один отзыв')
+                and Review.objects.filter(title=title,
+                                          author=author).exists()):
+            raise serializers.ValidationError(
+                'Можно оставить только один отзыв')
         return ser_data
 
     class Meta:
