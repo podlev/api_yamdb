@@ -3,6 +3,7 @@ from django.db import models
 
 
 class User(AbstractUser):
+    """Модель пользователя с ролями"""
     USER = 'user'
     MODERATOR = 'moderator'
     ADMIN = 'admin'
@@ -16,6 +17,7 @@ class User(AbstractUser):
     role = models.CharField(choices=ROLE_CHOICES, default='user', max_length=10)
 
     def save(self, *args, **kwargs):
+        """При сохранении в поле роль ставит admin если это супер юзер"""
         if self.is_superuser:
             self.role = 'admin'
         super(User, self).save()
