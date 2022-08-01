@@ -1,4 +1,4 @@
-from django.db import models
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 
@@ -46,10 +46,9 @@ class TitlesSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Titles для чтения данных"""
     genre = GenreSerializer(many=True, read_only=True)
     category = CategoriesSerializer(read_only=True)
-    # rating = serializers.IntegerField(source='reviews__score__avg',
-    #                                   read_only=True)
-    # rating = serializers.IntegerField(Title.objects.annotate(
-    #     rating=models.Avg('reviews__rating')))
+    rating = serializers.IntegerField(
+        Title.objects.annotate(Avg("reviews__score"))
+    )
 
     class Meta:
         model = Title
@@ -58,8 +57,8 @@ class TitlesSerializer(serializers.ModelSerializer):
                   'year',
                   'description',
                   'genre',
-                  'category',)
-                  # 'rating')
+                  'category',
+                  'rating')
 
         def validate_year(self, value):
             year = dt.date.today().year
@@ -67,6 +66,10 @@ class TitlesSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     'Проверьте год издания произведения!')
             return value
+
+        # def get_rating(self, obj):
+        #     rating_avg = Title.objects.annotate(models.Avg('reviews__score'))
+        #     return rating_avg
 
 
 class ReviewSerializer(serializers.ModelSerializer):

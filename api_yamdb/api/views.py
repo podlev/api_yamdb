@@ -38,7 +38,6 @@ class GenreViewSet(ListCreateDestroyViewSet):
 class TitlesViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     queryset = Title.objects.all()
-    serializer_class = TitlesSerializer
     permission_classes = [IsAdminOrReadOnly, ]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitlesFilter
