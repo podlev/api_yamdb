@@ -43,7 +43,6 @@ class TitlesSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Titles для чтения данных"""
     genre = GenreSerializer(many=True, read_only=True)
     category = CategoriesSerializer(read_only=True)
-
     # rating = serializers.IntegerField(
     #     Titles.objects.annotate(rating=Avg('reviews__score'))
     # )
@@ -51,7 +50,6 @@ class TitlesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Titles
         fields = ('id', 'name', 'year', 'description', 'genre', 'category')
-
 
         def validate_year(self, value):
             year = dt.date.today().year
