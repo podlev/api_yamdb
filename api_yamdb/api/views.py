@@ -28,6 +28,7 @@ class GenreViewSet(ListCreateDestroyViewSet):
     serializer_class = GenreSerializer
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = (filters.SearchFilter,)
+    filter_class = TitlesFilter
     search_fields = ('name',)
     lookup_field = 'slug'
 
