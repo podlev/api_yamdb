@@ -19,5 +19,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# os.environ['DJANGO_SETTINGS_MODULE']='api_yamdb_settings'

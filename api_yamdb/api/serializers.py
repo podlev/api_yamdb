@@ -52,7 +52,6 @@ class TitlesSerializer(serializers.ModelSerializer):
         """Cчитает средний рейтинг для поля rating"""
         return obj.reviews.all().aggregate(Avg('score'))['score__avg']
 
-
     class Meta:
         model = Title
         fields = ('id',
