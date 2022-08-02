@@ -22,11 +22,16 @@ api_yamdb
 # Установка
 
 ## 1) Склонировать репозиторий
+git clone github.com/podlev/api_yamdb.git
+
 ## 2) Создать и активировать виртуальное окружение для проекта
 
 python -m venv venv
 
-source venv/scripts/activate
+source venv/scripts/activate (Windows)
+source venv/bin/activate (MacOS/Linux)
+
+python3 -m pip install --upgrade pip
 
 ## 3) Установить зависимости
 python pip install -r requirements.txt
