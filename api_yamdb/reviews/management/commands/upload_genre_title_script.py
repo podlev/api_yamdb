@@ -1,7 +1,6 @@
 import csv
 from django.core.management.base import BaseCommand
 from reviews.models import Genre_title, Title, Genre
-from django.shortcuts import get_object_or_404
 
 
 class Command(BaseCommand):
