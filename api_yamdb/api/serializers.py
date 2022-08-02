@@ -1,6 +1,5 @@
-from django.db import models
 from django.shortcuts import get_object_or_404
-from rest_framework.exceptions import ValidationError
+from django.db.models import Avg
 
 from reviews.models import Title, Genre, Categories, Review, Comments
 from rest_framework import serializers
@@ -8,7 +7,7 @@ import datetime as dt
 
 
 class TitlesPostSerializer(serializers.ModelSerializer):
-    """Сериализатор для модели Titles для записи данных"""
+    """Сериализатор для модели Title для записи данных"""
     genre = serializers.SlugRelatedField(
         many=True,
         slug_field='slug',
@@ -43,14 +42,14 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
 
 class TitlesSerializer(serializers.ModelSerializer):
-    """Сериализатор для модели Titles для чтения данных"""
+    """Сериализатор для модели Title для чтения данных"""
     genre = GenreSerializer(many=True, read_only=True)
     category = CategoriesSerializer(read_only=True)
     rating = serializers.SerializerMethodField()
 
     def get_rating(self, obj):
+        """Cчитает средний рейтинг для поля rating"""
         return obj.reviews.all().aggregate(Avg('score'))['score__avg']
-
 
 
     class Meta:
@@ -64,6 +63,7 @@ class TitlesSerializer(serializers.ModelSerializer):
                   'rating')
 
         def validate_year(self, value):
+            """Проверка, что год не превышает текущий"""
             year = dt.date.today().year
             if not value <= year:
                 raise serializers.ValidationError(
@@ -72,6 +72,7 @@ class TitlesSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Review"""
     title = serializers.SlugRelatedField(
         slug_field='name',
         read_only=True,
@@ -83,6 +84,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     )
 
     def validate(self, ser_data):
+        """Проверяет, что к одному произведению можно поставить только один
+        отзыв"""
         author = None
         request = self.context.get('request')
 
@@ -104,6 +107,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentsSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Comment"""
     review = serializers.SlugRelatedField(
         slug_field='text',
         read_only=True
