@@ -28,7 +28,7 @@ git clone github.com/podlev/api_yamdb.git
 
 python -m venv venv
 
-source venv/scripts/activate (Windows)
+source venv/scripts/activate (Windows)    
 source venv/bin/activate (MacOS/Linux)
 
 python3 -m pip install --upgrade pip
