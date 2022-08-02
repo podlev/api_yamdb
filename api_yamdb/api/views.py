@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Avg
 
 from reviews.models import Categories, Genre, Title, Review
 from .serializers import (CategoriesSerializer,

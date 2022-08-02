@@ -1,16 +1,17 @@
 import csv
 from django.core.management.base import BaseCommand
-from reviews.models import Genre_title, Titles, Genre
+from reviews.models import Genre_title, Title, Genre
+from django.shortcuts import get_object_or_404
 
 
 class Command(BaseCommand):
     def handle(self, **options):
         with open("static/data/genre_title.csv",  encoding='utf-8') as csv_file:
             reader = csv.DictReader(csv_file, delimiter=",")
-            Genre_title.objects.bulk_create([
-                Genre_title(
-                    id=line['id'],
-                    title_id=Titles.objects.get_or_create(id=line['title_id']),
-                    genre_id=Genre.objects.get_or_create(id=line['genre_id'])
-                ) for line in reader
-            ])
+            for row in reader:
+                Genre_title.objects.create(
+                        id=row['id'],
+                        title_id=Title.objects.get_or_create(id=row['title_id']),
+                        genre_id=Genre.objects.get_or_create(id=row['genre_id'])
+                    )
+
