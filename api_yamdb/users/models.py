@@ -14,7 +14,9 @@ class User(AbstractUser):
     )
     email = models.EmailField(max_length=254, unique=True)
     bio = models.TextField(blank=True, default='')
-    role = models.CharField(choices=ROLE_CHOICES, default='user', max_length=10)
+    role = models.CharField(choices=ROLE_CHOICES,
+                            default='user',
+                            max_length=10)
 
     def save(self, *args, **kwargs):
         """При сохранении в поле роль ставит admin если это супер юзер"""

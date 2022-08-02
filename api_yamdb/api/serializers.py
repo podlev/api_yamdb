@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 
@@ -46,10 +47,12 @@ class TitlesSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Titles для чтения данных"""
     genre = GenreSerializer(many=True, read_only=True)
     category = CategoriesSerializer(read_only=True)
-    # rating = serializers.IntegerField(source='reviews__score__avg',
-    #                                   read_only=True)
-    rating = serializers.IntegerField(Title.objects.annotate(
-        rating=models.Avg('reviews__rating')))
+    rating = serializers.SerializerMethodField()
+
+    def get_rating(self, obj):
+        return obj.reviews.all().aggregate(Avg('score'))['score__avg']
+
+
 
     class Meta:
         model = Title
@@ -86,15 +89,15 @@ class ReviewSerializer(serializers.ModelSerializer):
 
         if request and hasattr(request, 'user'):
             author = request.user
-
-        title_id = self.context.get('view').kwargs.get('title_id')
-        title = get_object_or_404(Title, pk=title_id)
-        if (request.method == 'POST'
-                and Review.objects.filter(title=title,
-                                          author=author).exists()):
-            raise serializers.ValidationError(
-                'Можно оставить только один отзыв')
-        return ser_data
+        if author.id:
+            title_id = self.context.get('view').kwargs.get('title_id')
+            title = get_object_or_404(Title, pk=title_id)
+            if (request.method == 'POST'
+                    and Review.objects.filter(title=title,
+                                              author=author).exists()):
+                raise serializers.ValidationError(
+                    'Можно оставить только один отзыв')
+            return ser_data
 
     class Meta:
         model = Review
