@@ -11,7 +11,7 @@ class Categories(models.Model):
     slug = models.SlugField(unique=True, max_length=50)
 
     def __str__(self):
-        return self.name
+        return self.name[:15]
 
     class Meta:
         verbose_name = "Категория"
@@ -24,7 +24,7 @@ class Genre(models.Model):
     slug = models.SlugField(unique=True, max_length=50)
 
     def __str__(self):
-        return self.name
+        return self.name[:15]
 
     class Meta:
         verbose_name = "Жанр"
@@ -34,7 +34,7 @@ class Genre(models.Model):
 class Title(models.Model):
     """Модель произведений"""
     name = models.CharField(max_length=50)
-    year = models.PositiveSmallIntegerField('Год создания')
+    year = models.PositiveSmallIntegerField()
     description = models.TextField(blank=True)
     category = models.ForeignKey(
         Categories,
@@ -44,7 +44,7 @@ class Title(models.Model):
     genre = models.ManyToManyField(Genre, through='Genre_title')
 
     def __str__(self):
-        return self.name
+        return self.name[:15]
 
     class Meta:
         verbose_name = "Произведение"
