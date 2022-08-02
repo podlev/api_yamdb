@@ -48,8 +48,8 @@ API отправляет письмо с кодом подтверждения (
 
 Затем, отправляя токен с каждым запросом, можно будет обращаться к методам, например: 
 
-/api/v1/titles/ (GET, POST, PATCH, DELETE)
-/api/v1/genre/ (GET, POST, DELETE)
-/api/v1/categories/ (GET, POST, DELETE)
+/api/v1/titles/ (GET, POST, PATCH, DELETE)    
+/api/v1/genre/ (GET, POST, DELETE)    
+/api/v1/categories/ (GET, POST, DELETE)    
 
 При отправке запроса необходимо передать токен в заголовке Authorization: Bearer <токен>
