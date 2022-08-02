@@ -73,6 +73,7 @@ class TitlesSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Review"""
     title = serializers.SlugRelatedField(
         slug_field='name',
         read_only=True,
@@ -105,6 +106,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentsSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели Comments"""
     review = serializers.SlugRelatedField(
         slug_field='text',
         read_only=True
