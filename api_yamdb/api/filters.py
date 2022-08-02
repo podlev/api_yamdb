@@ -3,7 +3,8 @@ import django_filters
 from reviews.models import Title
 
 
-class TitlesFilter(django_filters.rest_framework.FilterSet):
+class TitleFilter(django_filters.rest_framework.FilterSet):
+    """Кастомный фильтр для модели Title"""
     genre = django_filters.CharFilter(
         field_name='genre__slug', lookup_expr='icontains'
     )
