@@ -28,7 +28,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
-        fields = ('name', 'slug')
+        exclude = ['id']
         lookup_field = 'slug'
 
 
@@ -37,7 +37,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Categories
-        fields = ('name', 'slug')
+        exclude = ['id']
         lookup_field = 'slug'
 
 
