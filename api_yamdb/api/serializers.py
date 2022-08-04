@@ -3,8 +3,8 @@ from django.db.models import Avg
 
 from reviews.models import Title, Genre, Categories, Review, Comments
 from rest_framework import serializers
-import datetime as dt
 
+from reviews.validators import validate_year
 
 class TitlesPostSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Title для записи данных"""
@@ -46,6 +46,7 @@ class TitlesSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True, read_only=True)
     category = CategoriesSerializer(read_only=True)
     rating = serializers.SerializerMethodField()
+    year = serializers.IntegerField(validators=[validate_year])
 
     def get_rating(self, obj):
         """Cчитает средний рейтинг для поля rating"""
@@ -61,14 +62,6 @@ class TitlesSerializer(serializers.ModelSerializer):
                   'genre',
                   'category',
                   'rating')
-
-        def validate_year(self, value):
-            """Проверка, что год не превышает текущий"""
-            year = dt.date.today().year
-            if not value <= year:
-                raise serializers.ValidationError(
-                    'Проверьте год издания произведения!')
-            return value
 
 
 class ReviewSerializer(serializers.ModelSerializer):

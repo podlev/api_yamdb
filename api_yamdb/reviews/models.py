@@ -2,30 +2,27 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
+from reviews.validators import validate_year
+
 User = get_user_model()
 
 
-class Categories(models.Model):
-    """Модель категорий произведений"""
+class Section(models.Model):
+    """Модель, от которой будем наследовать модели Genre и Categories"""
     name = models.CharField(max_length=256)
     slug = models.SlugField(unique=True, max_length=50)
 
     def __str__(self):
         return self.name[:15]
 
+
+class Categories(Section):
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
 
-class Genre(models.Model):
-    """Модель жанров произведений"""
-    name = models.CharField(max_length=50)
-    slug = models.SlugField(unique=True, max_length=50)
-
-    def __str__(self):
-        return self.name[:15]
-
+class Genre(Section):
     class Meta:
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
@@ -34,14 +31,14 @@ class Genre(models.Model):
 class Title(models.Model):
     """Модель произведений"""
     name = models.CharField(max_length=50)
-    year = models.PositiveSmallIntegerField()
+    year = models.PositiveSmallIntegerField(validators=[validate_year])
     description = models.TextField(blank=True)
     category = models.ForeignKey(
         Categories,
         on_delete=models.CASCADE,
         related_name='titles'
     )
-    genre = models.ManyToManyField(Genre, through='Genre_title')
+    genre = models.ManyToManyField(Genre, through='GenreTitle')
 
     def __str__(self):
         return self.name[:15]
@@ -51,10 +48,11 @@ class Title(models.Model):
         verbose_name_plural = "Произведения"
 
 
-class Genre_title(models.Model):
+class GenreTitle(models.Model):
     """Вспомогательная модель жанров произведений"""
     title_id = models.ForeignKey(Title, on_delete=models.CASCADE, null=True)
     genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True)
+
 
 
 class Review(models.Model):
