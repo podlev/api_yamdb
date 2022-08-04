@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Avg
 from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework.pagination import LimitOffsetPagination
@@ -42,7 +43,7 @@ class GenreViewSet(ListCreateDestroyViewSet):
 class TitlesViewSet(viewsets.ModelViewSet):
     """Представление для произведений"""
     pagination_class = LimitOffsetPagination
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(rating=Avg('reviews__score'))
     serializer_class = TitlesSerializer
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)

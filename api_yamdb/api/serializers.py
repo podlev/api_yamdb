@@ -45,13 +45,8 @@ class TitlesSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Title для чтения данных"""
     genre = GenreSerializer(many=True, read_only=True)
     category = CategoriesSerializer(read_only=True)
-    rating = serializers.SerializerMethodField()
+    rating = serializers.IntegerField(read_only=True)
     year = serializers.IntegerField(validators=[validate_year])
-
-    def get_rating(self, obj):
-        """Cчитает средний рейтинг для поля rating"""
-        return obj.reviews.all().aggregate(Avg('score'))['score__avg']
-
 
     class Meta:
         model = Title
@@ -100,7 +95,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentsSerializer(serializers.ModelSerializer):
-    """Сериализатор для модели Comment"""
+    """Сериализатор для модели Comments"""
     review = serializers.SlugRelatedField(
         slug_field='text',
         read_only=True
