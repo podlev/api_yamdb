@@ -1,11 +1,10 @@
-import datetime as dt
-
-from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from rest_framework import serializers
+from django.db.models import Avg
 
 from reviews.models import Title, Genre, Categories, Review, Comments
+from rest_framework import serializers
 
+from reviews.validators import validate_year
 
 class TitlesPostSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Title для записи данных"""
@@ -21,7 +20,7 @@ class TitlesPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = '__all__'
+        fields = ('id', 'name', 'year', 'description', 'genre', 'category',)
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -29,7 +28,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
-        fields = ('name', 'slug')
+        exclude = ['id']
         lookup_field = 'slug'
 
 
@@ -38,7 +37,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Categories
-        fields = ('name', 'slug')
+        exclude = ['id']
         lookup_field = 'slug'
 
 
@@ -46,11 +45,8 @@ class TitlesSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Title для чтения данных"""
     genre = GenreSerializer(many=True, read_only=True)
     category = CategoriesSerializer(read_only=True)
-    rating = serializers.SerializerMethodField()
-
-    def get_rating(self, obj):
-        """Cчитает средний рейтинг для поля rating"""
-        return obj.reviews.all().aggregate(Avg('score'))['score__avg']
+    rating = serializers.IntegerField(read_only=True)
+    year = serializers.IntegerField(validators=[validate_year])
 
     class Meta:
         model = Title
@@ -61,14 +57,6 @@ class TitlesSerializer(serializers.ModelSerializer):
                   'genre',
                   'category',
                   'rating')
-
-        def validate_year(self, value):
-            """Проверка, что год не превышает текущий"""
-            year = dt.date.today().year
-            if not value <= year:
-                raise serializers.ValidationError(
-                    'Проверьте год издания произведения!')
-            return value
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -98,8 +86,7 @@ class ReviewSerializer(serializers.ModelSerializer):
                     and Review.objects.filter(title=title,
                                               author=author).exists()):
                 raise serializers.ValidationError(
-                    'Можно оставить только один отзыв'
-                )
+                    'Можно оставить только один отзыв')
             return ser_data
 
     class Meta:
