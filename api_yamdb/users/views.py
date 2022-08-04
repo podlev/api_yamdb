@@ -1,6 +1,5 @@
 from smtplib import SMTPException
 
-from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, filters
@@ -9,13 +8,12 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from users.models import User
 from .permissions import IsAdmin
 from .serializers import (UserSerializer,
                           RegistrationSerializer,
                           TokenSerializer)
 from .utils import get_confirmation_code, check_confirmation_code
-
-User = get_user_model()
 
 
 class UserViewSet(viewsets.ModelViewSet):
