@@ -21,7 +21,7 @@ class TitlesPostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = ('id', 'name', 'year', 'description', 'genre', 'category',)
+        fields = '__all__'
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -98,7 +98,8 @@ class ReviewSerializer(serializers.ModelSerializer):
                     and Review.objects.filter(title=title,
                                               author=author).exists()):
                 raise serializers.ValidationError(
-                    'Можно оставить только один отзыв')
+                    'Можно оставить только один отзыв'
+                )
             return ser_data
 
     class Meta:
