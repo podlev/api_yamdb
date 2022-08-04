@@ -23,39 +23,39 @@ api_yamdb
 
 ## 1) Склонировать репозиторий
 
-'''
+```commandline
 git clone github.com/podlev/api_yamdb.git
-'''
+```
 
 ## 2) Создать и активировать виртуальное окружение для проекта
 
-'''
+```commandline
 python -m venv venv
 
 source venv/scripts/activate (Windows)    
 source venv/bin/activate (MacOS/Linux)
 
 python3 -m pip install --upgrade pip
-'''
+```
 
 ## 3) Установить зависимости
 
-'''
+```commandline
 python pip install -r requirements.txt
-'''
+```
 
 ## 4) Сделать миграции
 
-'''
+```commandline
 python manage.py makemigrations
 python manage.py migrate
-'''
+```
 
 ## 5) Запустить сервер
 
-'''
+```commandline
 python manage.py runserver
-'''
+```
 
 # Примеры
 

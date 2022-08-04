@@ -13,10 +13,25 @@ class User(AbstractUser):
         (ADMIN, 'Admin'),
     )
     email = models.EmailField(max_length=254, unique=True)
-    bio = models.TextField(blank=True, default='')
-    role = models.CharField(choices=ROLE_CHOICES,
-                            default='user',
-                            max_length=10)
+    bio = models.TextField(blank=True)
+    role = models.CharField(
+        choices=ROLE_CHOICES,
+        default=USER,
+        max_length=len(max([role[0] for role in ROLE_CHOICES], key=len))
+    )
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['username', 'email'],
+                name='unique_username_email'
+            )
+        ]
 
     def save(self, *args, **kwargs):
         """При сохранении в поле роль ставит admin если это супер юзер"""
@@ -27,6 +42,10 @@ class User(AbstractUser):
     def __str__(self):
         return f'User: {self.username}'
 
-    class Meta:
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
+    @property
+    def is_admin(self):
+        return self.role == self.ADMIN
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR

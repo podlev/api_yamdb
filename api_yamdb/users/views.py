@@ -1,5 +1,7 @@
 from smtplib import SMTPException
 
+from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, filters
@@ -13,7 +15,6 @@ from .permissions import IsAdmin
 from .serializers import (UserSerializer,
                           RegistrationSerializer,
                           TokenSerializer)
-from .utils import get_confirmation_code, check_confirmation_code
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -45,16 +46,18 @@ def new_user(request):
     """Функция создания нового пользователя"""
     serializer = RegistrationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-
+    username = serializer.validated_data.get('username')
+    email = serializer.validated_data.get('email')
+    user, created = User.objects.get_or_create(username=username,
+                                               email=email)
     try:
-        serializer.save()
-        username = serializer.validated_data.get('username')
-        user = get_object_or_404(User, username=username)
-        send_mail(subject='New registration',
-                  recipient_list=[serializer.validated_data.get('email')],
-                  message=f'Your code: {get_confirmation_code(user)}',
-                  from_email='email@email.ru',
-                  fail_silently=False)
+        send_mail(
+                subject='New registration',
+                recipient_list=[email],
+                message=f'Your code: {default_token_generator.make_token(user)}',
+                from_email=settings.EMAIL,
+                fail_silently=False
+            )
     except SMTPException as e:
         return Response({'error': e},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -70,10 +73,9 @@ def update_token(request):
     username = serializer.data.get('username')
     confirmation_code = serializer.data.get('confirmation_code')
     user = get_object_or_404(User, username=username)
-    if check_confirmation_code(user, confirmation_code):
+    if default_token_generator.check_token(user, confirmation_code):
         refresh = RefreshToken.for_user(user)
         return Response({'token': str(refresh.access_token)},
                         status=status.HTTP_200_OK)
-    else:
-        return Response({'token': 'invalid token'},
-                        status=status.HTTP_400_BAD_REQUEST)
+    return Response({'token': 'invalid token'},
+                    status=status.HTTP_400_BAD_REQUEST)

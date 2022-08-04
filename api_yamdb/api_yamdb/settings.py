@@ -117,3 +117,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+MAX_LENGTH = 15
+
+EMAIL = 'test@test.ru'

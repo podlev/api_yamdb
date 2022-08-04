@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
@@ -13,7 +14,7 @@ class Section(models.Model):
     slug = models.SlugField(unique=True, max_length=50)
 
     def __str__(self):
-        return self.name[:15]
+        return self.name[:settings.MAX_LENGTH]
 
 
 class Categories(Section):
@@ -41,7 +42,7 @@ class Title(models.Model):
     genre = models.ManyToManyField(Genre, through='GenreTitle')
 
     def __str__(self):
-        return self.name[:15]
+        return self.name[:settings.MAX_LENGTH]
 
     class Meta:
         verbose_name = "Произведение"
@@ -52,7 +53,6 @@ class GenreTitle(models.Model):
     """Вспомогательная модель жанров произведений"""
     title_id = models.ForeignKey(Title, on_delete=models.CASCADE, null=True)
     genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE, null=True)
-
 
 
 class Review(models.Model):
@@ -120,7 +120,7 @@ class Comments(models.Model):
     )
 
     def __str__(self):
-        return self.text[:15]
+        return self.text[:settings.MAX_LENGTH]
 
     class Meta:
         verbose_name = 'Комментарий'

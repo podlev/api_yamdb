@@ -1,10 +1,9 @@
 from django.shortcuts import get_object_or_404
-from django.db.models import Avg
-
-from reviews.models import Title, Genre, Categories, Review, Comments
 from rest_framework import serializers
 
+from reviews.models import Title, Genre, Categories, Review, Comments
 from reviews.validators import validate_year
+
 
 class TitlesPostSerializer(serializers.ModelSerializer):
     """Сериализатор для модели Title для записи данных"""
