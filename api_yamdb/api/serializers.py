@@ -100,7 +100,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentsSerializer(serializers.ModelSerializer):
-    """Сериализатор для модели Comment"""
+    """Сериализатор для модели Comments"""
     review = serializers.SlugRelatedField(
         slug_field='text',
         read_only=True
