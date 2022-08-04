@@ -13,8 +13,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import User
 from .permissions import IsAdmin
 from .serializers import (UserSerializer,
-                          RegistrationSerializer,
-                          TokenSerializer)
+                          TokenSerializer, RegistrationSerializer)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -46,22 +45,30 @@ def new_user(request):
     """Функция создания нового пользователя"""
     serializer = RegistrationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    username = serializer.validated_data.get('username')
-    email = serializer.validated_data.get('email')
-    user, created = User.objects.get_or_create(username=username,
-                                               email=email)
+    username = request.data.get('username')
+    email = request.data.get('email')
+    if (User.objects.filter(email__iexact=email).exists()
+            != User.objects.filter(username__iexact=username).exists()):
+        return Response(
+            {'error': 'A user with that username or email is already exists'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user, _ = User.objects.get_or_create(username=username,
+                                         email=email)
     try:
         send_mail(
-                subject='New registration',
-                recipient_list=[email],
-                message=f'Your code: {default_token_generator.make_token(user)}',
-                from_email=settings.EMAIL,
-                fail_silently=False
-            )
+            subject='New registration',
+            recipient_list=[email],
+            message=f'Your code: {default_token_generator.make_token(user)}',
+            from_email=settings.EMAIL,
+            fail_silently=False
+        )
     except SMTPException as e:
         return Response({'error': e},
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response({'username': username, 'email': email},
+                    status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
