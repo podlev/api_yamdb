@@ -73,21 +73,18 @@ class ReviewSerializer(serializers.ModelSerializer):
     def validate(self, ser_data):
         """Проверяет, что к одному произведению можно поставить только один
         отзыв"""
-        author = None
         request = self.context.get('request')
-
-        if request and hasattr(request, 'user'):
-            author = request.user
-        if author.id:
-            title_id = self.context.get('view').kwargs.get('title_id')
-            title = get_object_or_404(Title, pk=title_id)
-            if (request.method == 'POST'
-                    and Review.objects.filter(title=title,
-                                              author=author).exists()):
-                raise serializers.ValidationError(
-                    'Можно оставить только один отзыв'
-                )
-            return ser_data
+        author = request.user
+        title_id = self.context.get('view').kwargs.get('title_id')
+        title = get_object_or_404(Title, pk=title_id)
+        if (request.method == 'POST' and Review.objects.filter(
+            title=title,
+            author=author
+        ).exists()):
+            raise serializers.ValidationError(
+                'Можно оставить только один отзыв'
+            )
+        return ser_data
 
     class Meta:
         model = Review
