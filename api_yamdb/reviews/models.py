@@ -13,6 +13,9 @@ class Section(models.Model):
     name = models.CharField(max_length=256)
     slug = models.SlugField(unique=True, max_length=50)
 
+    class Meta:
+        abstract = True
+
     def __str__(self):
         return self.name[:settings.MAX_LENGTH]
 
@@ -41,12 +44,12 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField(Genre, through='GenreTitle')
 
-    def __str__(self):
-        return self.name[:settings.MAX_LENGTH]
-
     class Meta:
         verbose_name = "Произведение"
         verbose_name_plural = "Произведения"
+
+    def __str__(self):
+        return self.name[:settings.MAX_LENGTH]
 
 
 class GenreTitle(models.Model):

@@ -120,4 +120,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 MAX_LENGTH = 15
 
+MAX_USERNAME_LENGTH = 150
+
 EMAIL = 'test@test.ru'

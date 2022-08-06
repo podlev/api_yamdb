@@ -3,9 +3,11 @@ from smtplib import SMTPException
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import api_view, action, permission_classes
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -47,15 +49,11 @@ def new_user(request):
     serializer.is_valid(raise_exception=True)
     username = request.data.get('username')
     email = request.data.get('email')
-    if (User.objects.filter(email__iexact=email).exists()
-            != User.objects.filter(username__iexact=username).exists()):
-        return Response(
-            {'error': 'A user with that username or email is already exists'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-    user, _ = User.objects.get_or_create(username=username,
-                                         email=email)
+    try:
+        user, _ = User.objects.get_or_create(**serializer.validated_data)
+    except IntegrityError:
+        raise ValidationError(
+            'A user with that username or email is already exists')
     try:
         send_mail(
             subject='New registration',
