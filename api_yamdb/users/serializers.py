@@ -15,7 +15,6 @@ class RegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
 
-
 class TokenSerializer(serializers.Serializer):
     """Сериализатор для получения токена"""
     username = serializers.CharField(max_length=settings.MAX_USERNAME_LENGTH)
