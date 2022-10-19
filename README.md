@@ -85,6 +85,5 @@ python manage.py runserver
 ```
 - При отправке запроса необходимо передать токен в заголовке Authorization: Bearer <токен>
 - Основной список ресурсов API /api/v1/
-### Автор
-Telegram: [Лев Подъельников](https://t.me/podlev)
-
+### Авторы
+[Лев Подъельников](https://github.com/podlev) (users, permissions) | [Виталий Сергеев](https://github.com/Vitaly1996) (API) | [Ксения Зверева](https://github.com/Ksenia175) (Reviews)
